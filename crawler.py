@@ -3,14 +3,12 @@ from bs4 import BeautifulSoup
 #import pprint
 import re
 import JomestateImporter as ji
-
+import consts as cc
 
 #pp = pprint.PrettyPrinter(indent=4)
 #debug=False
-MAIN_URLS='http://www.cortinarent.com'
-IMAGE_URLS='http://www.cortinarent.com/data/frontImages/vacationrentals/vacationrentals_image/'
-payload={'take':'100','skip':'0','page':'1','pageSize':'100'}
 
+processed=0
 #fetch page
 def fetch_page(url):
     r = requests.get(url)
@@ -22,7 +20,7 @@ def fetch_page(url):
     return r.text.replace(u'\xa0',u' ')
 
 def fetch_post_aptlist(url):
-    r = requests.post(url,data=payload)
+    r = requests.post(url,data=cc.payload)
     if r.status_code != requests.codes.ok:
         print "Error fetching {0}".format(url)
         exit()
@@ -30,17 +28,18 @@ def fetch_post_aptlist(url):
 
 #apre la voce di menu per un determinato indirizzo
 def parse_address(c):
-    url=MAIN_URLS+c
+    url=cc.MAIN_URLS+c
     print url
     p=fetch_post_aptlist(url)
-    for apt in p['data_result']:
-        parse_apt(c, apt)
+    #for apt in p['data_result']:
+    #    ji.add_apt(apt)
+     #   global processed
+      #  processed+=1
+    ji.add_apt(p['data_result'][0])
 
-def parse_apt(address,apt):
-    print apt['vacationrentals_name']
 
 
-mainpage=fetch_page(MAIN_URLS)
+mainpage=fetch_page(cc.MAIN_URLS)
 if not mainpage:
     exit()
 mainsoup = BeautifulSoup(mainpage)
@@ -58,6 +57,8 @@ if len(hrefs)<1:
 for c in hrefs:
     parse_address(c)
 
+global processed
+print processed, "apts stolen"
 #for j in range(4,len(categories)):
  #   parse_category(categories[j],[])
 

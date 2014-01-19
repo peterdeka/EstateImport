@@ -3,6 +3,12 @@ import ftplib
 import requests
 import consts as cc
 import unicodedata
+import io
+from ftplib import FTP
+from PIL import Image
+import os
+import random
+
 def strip_accents(s):
    return ''.join(c for c in unicodedata.normalize('NFD', s)
                   if unicodedata.category(c) != 'Mn')
@@ -78,14 +84,48 @@ def add_apt(apt):
 	I_je_h_fields="INSERT INTO "+cc.sqlprefix+"cddir_content_has_fields VALUES(NULL,"+je_apt_id+",9,NULL,'"+strout+"',NULL)"
 	cur.execute(I_je_h_fields)
 
-	I_je_price="INSERT INTO "+cc.sqlprefix+"cddir_prices VALUES(NULL,"+je_apt_id+",87,'com_jomestate',"+apt['vacationrentals_price']+",NULL)"
+	I_je_price="INSERT INTO "+cc.sqlprefix+"cddir_prices VALUES(NULL,"+je_apt_id+","+cc.jome_rentalprice_id+",'com_jomestate',"+apt['vacationrentals_price']+",NULL)"
 	cur.execute(I_je_price)
+	
+
+	#aggiungo foto
+	upload_images(apt,je_apt_id,apt['vacationrentals_image'])
 	conn.commit()
-
-
 	return True
 
-#add_apt('fds')
+
+def upload_images(apt,apt_id,urls):
+	ftp=FTP()
+	ftp.connect(cc.FTP_HOST,port=cc.FTP_PORT)
+	ftp.login("wannaftp", "Xa!Hu7Pe")
+	
+	i=0
+	for u in urls.split(','):
+		ftp.cwd(cc.FTP_DIR)
+		f = open('tmp','wb')
+		imgurl=cc.IMAGE_URL+u
+		print "getting image",imgurl
+		f.write(requests.get(imgurl).content)
+		print "got image"
+		f.close()
+		path=cc.jome_imgdirs[random.randrange(0, len(cc.jome_imgdirs))]
+		ftp.cwd(path)
+		fname=get_alias(apt['vacationrentals_name'])+'-'+str(i)+'.'+u.split('.')[len(u.split('.'))-1]
+		print "uploading image to ",fname
+		f=open('tmp','r')
+		ftp.storbinary('STOR '+fname,f)
+		f.close()
+		i+=1
+		#add db entry
+		img = Image.open('tmp')
+		width, height = img.size
+		cur = conn.cursor()
+		print "adding image db entry"
+		if i<3:
+			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,40,"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
+		else:
+			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,41,"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
+		cur.execute(I_img)
 
 
 

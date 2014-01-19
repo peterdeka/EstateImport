@@ -1,5 +1,8 @@
-MAIN_URLS='http://www.cortinarent.com'
-IMAGE_URLS='http://www.cortinarent.com/data/frontImages/vacationrentals/vacationrentals_image/'
+MAIN_URL='http://www.cortinarent.com'
+IMAGE_URL='http://www.cortinarent.com/data/frontImages/vacationrentals/vacationrentals_image/'
+FTP_HOST='162.209.104.180'
+FTP_PORT='1311'
+FTP_DIR='/realestate/components/com_jomcomdev/images/'
 payload={'take':'100','skip':'0','page':'1','pageSize':'100'}
 sqlhost='162.209.104.180'
 sqldb='realestate'
@@ -11,3 +14,5 @@ jome_cat_rent='80'
 jome_cat_type='83'
 jome_user_id='801'
 jome_comp_id='1'
+jome_rentalprice_id='87'
+jome_imgdirs=['az','bj','bn','dh','dy','em','ex','fp','li','ly']

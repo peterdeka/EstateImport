@@ -28,18 +28,16 @@ def fetch_post_aptlist(url):
 
 #apre la voce di menu per un determinato indirizzo
 def parse_address(c):
-    url=cc.MAIN_URLS+c
+    url=cc.MAIN_URL+c
     print url
     p=fetch_post_aptlist(url)
-    #for apt in p['data_result']:
-    #    ji.add_apt(apt)
-     #   global processed
-      #  processed+=1
-    ji.add_apt(p['data_result'][0])
+    for apt in p['data_result']:
+        ji.add_apt(apt)
+        global processed
+        processed+=1
+    
 
-
-
-mainpage=fetch_page(cc.MAIN_URLS)
+mainpage=fetch_page(cc.MAIN_URL)
 if not mainpage:
     exit()
 mainsoup = BeautifulSoup(mainpage)
@@ -59,11 +57,3 @@ for c in hrefs:
 
 global processed
 print processed, "apts stolen"
-#for j in range(4,len(categories)):
- #   parse_category(categories[j],[])
-
-#for li in categories:
- #   parse_category(li,[])
-
-#fvariationserr.close()
-#fmanuerr.close()

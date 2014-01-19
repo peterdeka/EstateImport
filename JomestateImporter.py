@@ -23,8 +23,10 @@ def get_alias(t):
 	t=t.lower()
 	return t
 
+
 def add_apt(apt):
 	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace(u'\u2019', "\'")
+	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace('"', ' ')
 	cur = conn.cursor()
 	#ottengo rgt e lft
 	S_rg_lt='SELECT * FROM '+cc.sqlprefix+'assets WHERE parent_id='+cc.jome_parentid+' ORDER BY id DESC LIMIT 1'
@@ -53,10 +55,13 @@ def add_apt(apt):
 		
 	#add jome content
 	sqlnone='NULL'
-	
+	clidx=apt['vacationrentals_desc'].find("Classe energetica ")
+	ecl='B'
+	if clidx>-1:
+		ecl=apt['vacationrentals_desc'][clidx+len("Classe energetica ")]
 	I_je_cont="INSERT INTO "+cc.sqlprefix+"cddir_jomestate VALUES("+sqlnone+","+cc.jome_cat_rent+","+cc.jome_cat_type+","+addr_id+","+cc.jome_user_id+","+cc.jome_comp_id+","
 	I_je_cont+=cc.jome_agent_id+","+asset_id+",0,'"+apt['vacationrentals_name']+"','"+get_alias(apt['vacationrentals_name'])+"','',"+'"<p>'+apt['vacationrentals_desc'].split('.')[0]+'</p>",'
-	I_je_cont+='"<p>'+apt['vacationrentals_desc']+'</p>"'+",'A','','0',now(),now(),now(),"+sqlnone+',1,1,0,"'+apt['vacationrentals_name']+'","'+apt['vacationrentals_desc'].split('.')[0]+'",0,0,'+sqlnone+",'*')"
+	I_je_cont+='"<p>'+apt['vacationrentals_desc']+'</p>"'+",'"+ecl+"','','0',now(),now(),now(),"+sqlnone+',1,1,0,"'+apt['vacationrentals_name']+'","'+apt['vacationrentals_desc'].split('.')[0]+'",0,0,'+sqlnone+",'*')"
 	print I_je_cont
 	cur.execute(I_je_cont)
 
@@ -122,9 +127,9 @@ def upload_images(apt,apt_id,urls):
 		cur = conn.cursor()
 		print "adding image db entry"
 		if i<3:
-			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,40,"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
+			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,'+jome_img_intro+',"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
 		else:
-			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,41,"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
+			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,'+jome_img_gallery+',"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
 		cur.execute(I_img)
 
 

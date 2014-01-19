@@ -55,7 +55,7 @@ def add_apt(apt):
 		
 	#add jome content
 	sqlnone='NULL'
-	clidx=apt['vacationrentals_desc'].find("Classe energetica ")
+	clidx=apt['vacationrentals_desc'].lower().find("classe energetica ")
 	ecl='B'
 	if clidx>-1:
 		ecl=apt['vacationrentals_desc'][clidx+len("Classe energetica ")]
@@ -127,9 +127,9 @@ def upload_images(apt,apt_id,urls):
 		cur = conn.cursor()
 		print "adding image db entry"
 		if i<3:
-			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,'+jome_img_intro+',"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
+			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,'+cc.jome_img_intro+',"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
 		else:
-			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,'+jome_img_gallery+',"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
+			I_img="INSERT INTO "+cc.sqlprefix+"cddir_images VALUES(NULL,"+apt_id+',NULL,NULL,'+cc.jome_img_gallery+',"'+apt['vacationrentals_name']+'","'+fname+'","'+path+'",'+str(width)+","+str(height)+','+str(i)+',"",'+str(os.path.getsize('tmp'))+',"com_jomestate")'
 		cur.execute(I_img)
 
 

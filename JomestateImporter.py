@@ -26,6 +26,9 @@ def get_alias(t):
 
 def add_apt(apt):
 	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace(u'\u2019', "\'")
+	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace(u'\u2013', "\"")
+	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace(u'\u201c', "\"")
+	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace(u'\u201d', "\"")
 	apt['vacationrentals_desc']=apt['vacationrentals_desc'].replace('"', ' ')
 	cur = conn.cursor()
 	#ottengo rgt e lft
@@ -40,13 +43,31 @@ def add_apt(apt):
 	itemn=a[5].split('.')
 	itemn=str(int(itemn[len(itemn)-1])+1)
 	S_addr="SELECT * FROM "+cc.sqlprefix+"cddir_categories WHERE extension='com_jomcomdev.address' AND title='"+apt['category_name']+"'"
-	print S_addr
+	#print S_addr
 	cur.execute(S_addr)
 	a=cur.fetchone()
 	if not a:
-		print 'address ',apt['category_name'],' not found'
+		print '^^^^^^^^^^^^^^^^^^address '
+		print apt['category_name']
+		print ' not found(', apt['vacationrentals_name']
+		#provo con business type
+		S_addr="SELECT * FROM "+cc.sqlprefix+"cddir_categories WHERE extension='com_jomcomdev.address' AND title='"+apt['business_type']+"'"
+	        #print S_addr
+        	cur.execute(S_addr)
+        	a=cur.fetchone()
+	if not a:
+		print '**************business type ',apt['business_type'],' not found'
 		return False
+	
 	addr_id=str(a[0])
+	
+	#asset already there?
+	S_asset="SELECT * FROM "+cc.sqlprefix+"assets WHERE title="+'"'+apt['vacationrentals_name']+'"'
+	cur.execute(S_asset)
+	a=cur.fetchone()
+	if a:
+		print 'asset already there, skipping'
+		return False
 	
 	#add asset
 	I_asset="INSERT INTO "+cc.sqlprefix+"assets VALUES(NULL,"+cc.jome_parentid+","+lft+","+rgt+",2,"+'"com_jomestate.item.'+itemn+'","'+apt['vacationrentals_name']+'","")'

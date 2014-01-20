@@ -52,8 +52,8 @@ if len(hrefs)<1:
     print "Error can't find addresses"
     exit()
 
-for c in hrefs:
-    parse_address(c)
-
+#for c in hrefs:
+ #   parse_address(c)
+parse_address('/All-Apartments')
 global processed
 print processed, "apts stolen"
